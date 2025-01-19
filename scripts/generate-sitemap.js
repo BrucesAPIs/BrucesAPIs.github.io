@@ -39,11 +39,25 @@ function generateSitemap() {
             throw new Error(`Invalid slug format in file ${file}. Slug "${postContent.slug}" must contain only lowercase letters, numbers, and hyphens, and cannot start or end with a hyphen.`);
         }
 
+        // Check if rapidapi_link exists
+        if (!postContent.rapidapi_link) {
+            throw new Error(`Missing required property 'rapidapi_link' in file ${file}`);
+        }
+
+        // Add main post URL
         sitemap += `  <url>
     <loc>${SITE_URL}/posts/${postContent.slug}</loc>
     <lastmod>${new Date(postContent.date).toISOString()}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>\n`;
+
+        // Add RapidAPI link URL
+        sitemap += `  <url>
+    <loc>${postContent.rapidapi_link}</loc>
+    <lastmod>${new Date(postContent.date).toISOString()}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>\n`;
     });
 

@@ -10,6 +10,7 @@ export interface Post {
     date: string;
     content: string;
     contentHtml?: string;
+    rapidapi_link: string;
 }
 
 export function getAllPosts(): Post[] {
