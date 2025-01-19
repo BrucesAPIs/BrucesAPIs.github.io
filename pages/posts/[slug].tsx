@@ -41,10 +41,15 @@ export default function PostPage({ post }: PostPageProps) {
                     </header>
 
                     {/* Content Section - Using GitHub's markdown styling */}
-                    <div className="markdown-body bg-white rounded-lg shadow-md">
+                    <div className="markdown-body bg-white rounded-lg shadow-md prose prose-lg max-w-none">
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
                             rehypePlugins={[rehypeRaw, rehypeHighlight]}
+                            components={{
+                                blockquote: ({ node, ...props }) => (
+                                    <blockquote className="border-l-4 border-gray-300 pl-4 my-4" {...props} />
+                                ),
+                            }}
                         >
                             {post.content}
                         </ReactMarkdown>
@@ -82,6 +87,50 @@ export default function PostPage({ post }: PostPageProps) {
                     max-width: 980px;
                     margin: 0 auto;
                     padding: 45px;
+                }
+
+                /* Add blockquote styles */
+                .markdown-body blockquote {
+                    padding: 0 1em;
+                    margin: 1em 0;
+                    color: #6a737d;
+                    border-left: 0.25em solid #dfe2e5;
+                    background-color: #f6f8fa;
+                }
+
+                .markdown-body blockquote > :first-child {
+                    margin-top: 0;
+                }
+
+                .markdown-body blockquote > :last-child {
+                    margin-bottom: 0;
+                }
+
+                /* Add these new table styles */
+                .markdown-body table {
+                    border-collapse: collapse;
+                    width: 100%;
+                    margin: 1em 0;
+                }
+
+                .markdown-body table th {
+                    background-color: #f8f9fa;
+                    border: 1px solid #dfe2e5;
+                    padding: 12px;
+                    font-weight: 600;
+                }
+
+                .markdown-body table td {
+                    border: 1px solid #dfe2e5;
+                    padding: 12px;
+                }
+
+                .markdown-body table tr:nth-child(even) {
+                    background-color: #f8f9fa;
+                }
+
+                .markdown-body table tr:hover {
+                    background-color: #f1f4f7;
                 }
 
                 @media (max-width: 767px) {
