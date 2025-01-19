@@ -11,6 +11,8 @@ export interface Post {
     content: string;
     contentHtml?: string;
     rapidapi_link: string;
+    excerpt?: string;    // 可选的摘要字段
+    image?: string;        //
 }
 
 export function getAllPosts(): Post[] {
