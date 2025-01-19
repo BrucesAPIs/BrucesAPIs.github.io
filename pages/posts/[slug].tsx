@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import rehypeHighlight from 'rehype-highlight';
 import { getAllPosts, getPostBySlug, Post } from '../../utils/content';
+import Link from 'next/link';
 
 interface PostPageProps {
     post: Post;
@@ -14,15 +15,41 @@ export default function PostPage({ post }: PostPageProps) {
     return (
         <>
             <Head>
-                <title>{post.title}</title>
-                <meta name="description" content={post.content.slice(0, 160)} />
+                <title>{`${post.title} | Bruce's API Documentation`}</title>
+                <meta name="description" content={post.excerpt || post.content.slice(0, 160)} />
+                <meta property="og:title" content={`${post.title} | Bruce's API Documentation`} />
+                <meta property="og:description" content={post.excerpt || post.content.slice(0, 160)} />
+                {post.image && <meta property="og:image" content={post.image} />}
                 <link
                     rel="stylesheet"
                     href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/github.min.css"
                 />
+
+                {/* Add structured data for Google */}
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "TechArticle",
+                        "headline": post.title,
+                        "datePublished": post.date,
+                        "author": {
+                            "@type": "Person",
+                            "name": "Bruce"
+                        },
+                        "description": post.excerpt || post.content.slice(0, 160)
+                    })}
+                </script>
             </Head>
 
             <div>
+                {/* Navigation */}
+                <nav className="bg-gray-50 border-b">
+                    <div className="max-w-4xl mx-auto px-4 py-3">
+                        <Link href="/">
+                            <span className="text-gray-600 hover:text-gray-900">← Back to API services</span>
+                        </Link>
+                    </div>
+                </nav>
 
                 {/* Main Content */}
                 <article className="max-w-4xl mx-auto px-4 py-12">
