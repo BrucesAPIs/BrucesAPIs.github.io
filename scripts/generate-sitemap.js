@@ -49,8 +49,15 @@ function generateSitemap() {
 
     sitemap += '</urlset>';
 
-    // Write sitemap to public directory
+    // Write sitemap to public directory AND out directory
     fs.writeFileSync(path.join(process.cwd(), 'public/sitemap.xml'), sitemap);
+
+    // Ensure out directory exists
+    const outDir = path.join(process.cwd(), 'out');
+    if (fs.existsSync(outDir)) {
+        fs.writeFileSync(path.join(outDir, 'sitemap.xml'), sitemap);
+    }
+
     console.log('Sitemap generated successfully!');
 }
 
