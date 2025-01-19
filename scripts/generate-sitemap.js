@@ -3,6 +3,7 @@ const path = require('path');
 
 const SITE_URL = 'https://brucesapis.github.io'; // Replace with your actual domain
 const POSTS_DIR = path.join(process.cwd(), 'content/posts');
+const RAPIDAPI_PROFILE = 'https://rapidapi.com/user/brucewwx';
 
 function isValidSlug(slug) {
     // 只允许小写字母、数字和连字符
@@ -26,6 +27,13 @@ function generateSitemap() {
     <loc>${SITE_URL}</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+  </url>\n`;
+
+    // Add RapidAPI profile
+    sitemap += `  <url>
+    <loc>${RAPIDAPI_PROFILE}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>\n`;
 
     // Process each post
