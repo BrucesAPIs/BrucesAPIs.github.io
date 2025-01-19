@@ -4,6 +4,14 @@ const path = require('path');
 const SITE_URL = 'https://brucesapis.github.io'; // Replace with your actual domain
 const POSTS_DIR = path.join(process.cwd(), 'content/posts');
 
+function isValidSlug(slug) {
+    // 只允许小写字母、数字和连字符
+    // 不能以连字符开始或结束
+    // 不能有连续的连字符
+    const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+    return slugRegex.test(slug);
+}
+
 function generateSitemap() {
     // Read all JSON files from posts directory
     const postFiles = fs.readdirSync(POSTS_DIR)
@@ -26,10 +34,13 @@ function generateSitemap() {
             fs.readFileSync(path.join(POSTS_DIR, file), 'utf-8')
         );
 
-        // Keep the original filename casing
-        const postSlug = file.replace('.json', '');
+        // 验证 slug
+        if (!isValidSlug(postContent.slug)) {
+            throw new Error(`Invalid slug format in file ${file}. Slug "${postContent.slug}" must contain only lowercase letters, numbers, and hyphens, and cannot start or end with a hyphen.`);
+        }
+
         sitemap += `  <url>
-    <loc>${SITE_URL}/posts/${postSlug}</loc>
+    <loc>${SITE_URL}/posts/${postContent.slug}</loc>
     <lastmod>${new Date(postContent.date).toISOString()}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
