@@ -13,12 +13,10 @@ function isValidSlug(slug) {
     return slugRegex.test(slug);
 }
 
-function generateSitemap() {
-    // Read all JSON files from posts directory
+function generatePostSitemap() {
     const postFiles = fs.readdirSync(POSTS_DIR)
         .filter(file => file.endsWith('.json'));
 
-    // XML header and urlset opening tag
     let sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
     sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
@@ -42,12 +40,10 @@ function generateSitemap() {
             fs.readFileSync(path.join(POSTS_DIR, file), 'utf-8')
         );
 
-        // 验证 slug
         if (!isValidSlug(postContent.slug)) {
             throw new Error(`Invalid slug format in file ${file}. Slug "${postContent.slug}" must contain only lowercase letters, numbers, and hyphens, and cannot start or end with a hyphen.`);
         }
 
-        // Check if rapidapi_link exists
         if (!postContent.rapidapi_link) {
             throw new Error(`Missing required property 'rapidapi_link' in file ${file}`);
         }
@@ -70,17 +66,42 @@ function generateSitemap() {
     });
 
     sitemap += '</urlset>';
-
-    // Write sitemap to public directory AND out directory
-    fs.writeFileSync(path.join(process.cwd(), 'public/sitemap.xml'), sitemap);
-
-    // Ensure out directory exists
-    const outDir = path.join(process.cwd(), 'out');
-    if (fs.existsSync(outDir)) {
-        fs.writeFileSync(path.join(outDir, 'sitemap.xml'), sitemap);
-    }
-
-    console.log('Sitemap generated successfully!');
+    return sitemap;
 }
 
-generateSitemap(); 
+function generateSitemapIndex() {
+    const currentDate = new Date().toISOString();
+
+    let sitemapIndex = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    sitemapIndex += '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+
+    sitemapIndex += `  <sitemap>
+    <loc>${SITE_URL}/post-sitemap.xml</loc>
+    <lastmod>${currentDate}</lastmod>
+  </sitemap>\n`;
+
+    sitemapIndex += '</sitemapindex>';
+    return sitemapIndex;
+}
+
+function generateSitemaps() {
+    const postSitemap = generatePostSitemap();
+    const sitemapIndex = generateSitemapIndex();
+
+    // Write post-sitemap.xml to public and out directories
+    fs.writeFileSync(path.join(process.cwd(), 'public/post-sitemap.xml'), postSitemap);
+
+    // Write sitemap index to public and out directories
+    fs.writeFileSync(path.join(process.cwd(), 'public/sitemap.xml'), sitemapIndex);
+
+    // Ensure out directory exists and write files there too
+    const outDir = path.join(process.cwd(), 'out');
+    if (fs.existsSync(outDir)) {
+        fs.writeFileSync(path.join(outDir, 'post-sitemap.xml'), postSitemap);
+        fs.writeFileSync(path.join(outDir, 'sitemap.xml'), sitemapIndex);
+    }
+
+    console.log('Sitemaps generated successfully!');
+}
+
+generateSitemaps(); 

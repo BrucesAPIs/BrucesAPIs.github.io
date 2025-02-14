@@ -2,3 +2,4 @@
 node_*/
 out/
 sitemap.xml
+public/**.xml
